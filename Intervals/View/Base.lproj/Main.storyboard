@@ -62,7 +62,7 @@
                                                 <rect key="frame" x="-2" y="44" width="358" height="31"/>
                                                 <color key="tintColor" name="RedApp"/>
                                                 <connections>
-                                                    <action selector="workoutTimeChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="9jI-jm-HYT"/>
+                                                    <action selector="workoutTimeChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="dx3-Eb-aWH"/>
                                                 </connections>
                                             </slider>
                                         </subviews>
@@ -97,7 +97,7 @@
                                                 <rect key="frame" x="-2" y="44" width="358" height="31"/>
                                                 <color key="tintColor" name="GreenApp"/>
                                                 <connections>
-                                                    <action selector="breakTimeChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="daA-Vk-CKS"/>
+                                                    <action selector="breakTimeChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="grV-Gc-e8b"/>
                                                 </connections>
                                             </slider>
                                         </subviews>
@@ -167,11 +167,12 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="breakSlider" destination="Suv-50-I6q" id="jRy-hl-ZRZ"/>
+                        <outlet property="breakSlider" destination="Suv-50-I6q" id="oqj-B3-Vni"/>
                         <outlet property="breakTimeLabel" destination="kAR-Hl-QQs" id="KzF-TT-xL6"/>
                         <outlet property="intervalsLabel" destination="yt4-yg-WNF" id="CYm-Cq-s0a"/>
                         <outlet property="startButton" destination="RNf-Bv-qCB" id="khX-WN-boM"/>
-                        <outlet property="workoutSlider" destination="G9B-Dg-crZ" id="Mt4-xv-cEF"/>
+                        <outlet property="stepper" destination="zqE-0z-MOG" id="3Z9-y8-p5a"/>
+                        <outlet property="workoutSlider" destination="G9B-Dg-crZ" id="gKp-Z0-WfR"/>
                         <outlet property="workoutTimeLabel" destination="iQr-ND-0BZ" id="lQq-Tc-VWm"/>
                         <segue destination="63c-QH-62P" kind="show" identifier="goToTimerScreen" id="rDv-3V-g6t"/>
                     </connections>

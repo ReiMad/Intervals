@@ -19,6 +19,7 @@ protocol TimerManagerDelegate {
 class TimerManager {
     var delegate: TimerManagerDelegate?
     var timer = Timer()
+    let defaults = UserDefaults.standard
     
     var currentInterval: Int = 1
     var totalOfIntervals: Int = 1
@@ -47,7 +48,6 @@ class TimerManager {
     func resumeTimer(time: Double) {
         timer = Timer.scheduledTimer(timeInterval: timeInterval, target: self, selector: #selector(countDownTimerProgress), userInfo: nil, repeats: true)
     }
-    
     
     @objc func countDownTimerProgress() {
         if currentTime < 1 + timeInterval {
@@ -79,8 +79,6 @@ class TimerManager {
             delegate?.updateRingProgress(currentTime: currentTimeString, ringProgress: ringProgress)
         }
     }
-    
-    
     
         //The first time this runs is once the warm up is done.
     func startNextTimer(with activity: String) -> Double? {
@@ -150,22 +148,23 @@ class TimerManager {
         }
     }
     
-    
-    
     //Functions executed from the main view
     func setWorkoutTime(time: Int) -> String {
         timers[K.Activities.workout] = Double(time)
+        defaults.set(time, forKey: K.Activities.workout)
         return returnTimeString(for: time)
     }
     
     func setBreakTime(time: Int) -> String {
         timers[K.Activities.breakTime] = Double(time)
+        defaults.set(time, forKey: K.Activities.breakTime)
         return returnTimeString(for: time)
     }
     
     func updateIntervals(_ intervals: Double) -> String {
         totalOfIntervals = Int(intervals)
         let intervalString = String(totalOfIntervals)
+        defaults.set(intervalString, forKey: "intervals")
         return intervalString
     }
     
