@@ -21,22 +21,62 @@ class TimerManager {
     var timer = Timer()
     let defaults = UserDefaults.standard
     
-    var currentInterval: Int = 1
+    // MARK: - User preferences
     var totalOfIntervals: Int = 1
-    var currentActivity: String = K.Activities.getReady
-    var currentActivityDescription: String = K.ActivityMessages.getReady
-    
-    //Times for timers
     var timers: [String: Double] = [
         K.Activities.getReady: 10,
         K.Activities.workout: 90,
         K.Activities.breakTime: 90
     ]
+
+    func setWorkoutTime(time: Int) -> String {
+        timers[K.Activities.workout] = Double(time)
+        defaults.set(time, forKey: K.Activities.workout)
+        return returnTimeString(for: time)
+    }
     
-    //Timer Progress
+    func setBreakTime(time: Int) -> String {
+        timers[K.Activities.breakTime] = Double(time)
+        defaults.set(time, forKey: K.Activities.breakTime)
+        return returnTimeString(for: time)
+    }
+    
+    func updateIntervals(_ intervals: Double) -> String {
+        totalOfIntervals = Int(intervals)
+        let intervalString = String(totalOfIntervals)
+        defaults.set(totalOfIntervals, forKey: K.intervals)
+        return intervalString
+    }
+    
+    func returnTimeString(for time: Int) -> String {
+        switch time {
+        case 60..<120:
+            if time < 70 {
+                return "01:0\(time - 60)"
+            } else {
+                return "01:\(time - 60)"
+            }
+        case 120..<180:
+            if time < 130 {
+                return "02:0\(time - 120)"
+            } else {
+               return "02:\(time - 120)"
+            }
+        case 180:
+            return "03:00"
+        default:
+            return "\(time)"
+        }
+    }
+
+    
+    // MARK: - Timer logic and functions
     let timeInterval: Double = 0.05
     var currentTime: Double = 0
     var percentageProgress: Double = 0
+    var currentInterval: Int = 1
+    var currentActivity: String = K.Activities.getReady
+    var currentActivityDescription: String = K.ActivityMessages.getReady
    
     func starTimer(time : Double) {
         percentageProgress = 0
@@ -148,49 +188,8 @@ class TimerManager {
         }
     }
     
-    //Functions executed from the main view
-    func setWorkoutTime(time: Int) -> String {
-        timers[K.Activities.workout] = Double(time)
-        defaults.set(time, forKey: K.Activities.workout)
-        return returnTimeString(for: time)
-    }
     
-    func setBreakTime(time: Int) -> String {
-        timers[K.Activities.breakTime] = Double(time)
-        defaults.set(time, forKey: K.Activities.breakTime)
-        return returnTimeString(for: time)
-    }
-    
-    func updateIntervals(_ intervals: Double) -> String {
-        totalOfIntervals = Int(intervals)
-        let intervalString = String(totalOfIntervals)
-        defaults.set(intervalString, forKey: "intervals")
-        return intervalString
-    }
-    
-    func returnTimeString(for time: Int) -> String {
-        switch time {
-        case 60..<120:
-            if time < 70 {
-                return "01:0\(time - 60)"
-            } else {
-                return "01:\(time - 60)"
-            }
-        case 120..<180:
-            if time < 130 {
-                return "02:0\(time - 120)"
-            } else {
-               return "02:\(time - 120)"
-            }
-        case 180:
-            return "03:00"
-        default:
-            return "\(time)"
-        }
-    }
-    
-    
-    //Sound functions
+    // MARK: - Timer countdown sound
     var player: AVAudioPlayer?
     func playSound(sound: String) {
         let url = Bundle.main.url(forResource: sound, withExtension: "mp3")

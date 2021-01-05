@@ -19,7 +19,7 @@ class TimerView: UIViewController {
     @IBOutlet weak var stopBtn: UIButton!
 
     
-    var timerManager = TimerManager()
+    var timerManager: TimerManager?
     let animatedLayer = CAShapeLayer()
     let tracklayer = CAShapeLayer()
     var ringHasBeenDrawn = false
@@ -27,14 +27,16 @@ class TimerView: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        timerManager.delegate = self
-        intervalsLabel.text = "\(timerManager.currentInterval) / \(timerManager.totalOfIntervals)"
-        activityLabel.text = timerManager.currentActivity
-        pauseBtn.layer.cornerRadius = 4
-        
-        if let warmUptimer = timerManager.timers[K.Activities.getReady] {
-            timerManager.starTimer(time: warmUptimer)
-        }
+        if let safeTimerManager = timerManager {
+            safeTimerManager.delegate = self
+            intervalsLabel.text = "\(safeTimerManager.currentInterval) / \(safeTimerManager.totalOfIntervals)"
+            activityLabel.text = safeTimerManager.currentActivity
+            pauseBtn.layer.cornerRadius = 4
+            
+            if let warmUptimer = safeTimerManager.timers[K.Activities.getReady] {
+                safeTimerManager.starTimer(time: warmUptimer)
+            }
+        } 
     }
     
     //Draw the progress ring
@@ -87,12 +89,14 @@ class TimerView: UIViewController {
     }
     
     @IBAction func pauseBtnTapped(_ sender: UIButton) {
-        if timerManager.timer.isValid {
-            timerManager.timer.invalidate()
-            pauseBtn.setTitle("Resume", for: .normal)
-        } else {
-            timerManager.resumeTimer(time: timerManager.currentTime)
-            pauseBtn.setTitle("Pause", for: .normal)
+        if let safeTimerManager = timerManager {
+            if safeTimerManager.timer.isValid {
+                safeTimerManager.timer.invalidate()
+                pauseBtn.setTitle("Resume", for: .normal)
+            } else {
+                safeTimerManager.resumeTimer(time: safeTimerManager.currentTime)
+                pauseBtn.setTitle("Pause", for: .normal)
+            }
         }
         
         if stopBtn.isEnabled {
@@ -103,9 +107,11 @@ class TimerView: UIViewController {
     }
     
     @IBAction func stopBtnTapped(_ sender: UIButton) {
-        timerManager.timer.invalidate()
-        timerManager.resetTimerParameters()
-        timerManager.player?.stop()
+        if let safeTimerManager = timerManager {
+            safeTimerManager.timer.invalidate()
+            safeTimerManager.resetTimerParameters()
+            safeTimerManager.player?.stop()
+        }
         self.dismiss(animated: true, completion: nil)
     }
 
@@ -119,11 +125,13 @@ extension TimerView: TimerManagerDelegate {
     }
     
     func updateIntervals() {
-        intervalsLabel.text = "\(timerManager.currentInterval) / \(timerManager.totalOfIntervals)"
+        if let safeTimerManager = timerManager {
+            intervalsLabel.text = "\(safeTimerManager.currentInterval) / \(safeTimerManager.totalOfIntervals)"
+        }
     }
     
     func updateCurrentActivity() {
-        activityLabel.text = timerManager.currentActivityDescription
+        activityLabel.text = timerManager?.currentActivityDescription
         if activityLabel.text == K.ActivityMessages.workoutDone {
             pauseBtn.isEnabled = false
             pauseBtn.alpha = 0.5

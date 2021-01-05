@@ -10,6 +10,8 @@ import Foundation
 
 struct K {
     static let timerViewSegue = "goToTimerScreen"
+    static let appFirstBoot = "firstBoot"
+    static let intervals = "intervals"
     
     struct Activities {
         static let getReady = "getReady"

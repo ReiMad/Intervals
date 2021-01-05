@@ -8,7 +8,7 @@
 
 import UIKit
 
-class MainView: UIViewController {
+class SettingsView: UIViewController {
 
     @IBOutlet weak var workoutTimeLabel: UILabel!
     @IBOutlet weak var breakTimeLabel: UILabel!
@@ -25,25 +25,7 @@ class MainView: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         startButton.layer.cornerRadius = 4
-        if UserDefaults.standard.object(forKey: K.Activities.workout) == nil {
-            workoutSlider.value = 90
-            breakSlider.value = 90
-            workoutTimeLabel.text = timerManager.setWorkoutTime(time: Int(workoutSlider.value))
-            breakTimeLabel.text = timerManager.setBreakTime(time: Int(breakSlider.value))
-            timerManager.defaults.setValue(true, forKey: "firstAppBoot")
-        } else {
-            //Loads User Defaults
-                //workout time & label data
-            workoutSlider.value = UserDefaults.standard.float(forKey: K.Activities.workout)
-            workoutTimeLabel.text = timerManager.returnTimeString(for: UserDefaults.standard.integer(forKey: K.Activities.workout))
-                //break time & label data
-            breakSlider.value = UserDefaults.standard.float(forKey: K.Activities.breakTime)
-            breakTimeLabel.text = timerManager.returnTimeString(for: UserDefaults.standard.integer(forKey: K.Activities.breakTime))
-                //Intervals data
-            stepper.value = UserDefaults.standard.double(forKey: "intervals")
-            intervalsLabel.text = UserDefaults.standard.string(forKey: "intervals")
-        }
-        
+        loadUserPreferences()
     }
 
     
@@ -62,7 +44,6 @@ class MainView: UIViewController {
     
     
     // MARK: - Button and segue
-    
     @IBAction func startBtnTapped(_ sender: UIButton) {
         self.performSegue(withIdentifier: K.timerViewSegue, sender: self)
     }
@@ -71,6 +52,26 @@ class MainView: UIViewController {
         if segue.identifier == K.timerViewSegue {
             let timerView = segue.destination as! TimerView
             timerView.timerManager = timerManager
+        }
+    }
+    
+    // MARK: - Load user preferences function
+    func loadUserPreferences() {
+        if timerManager.defaults.object(forKey: K.appFirstBoot) != nil {
+            //Sliders values
+            workoutSlider.value = timerManager.defaults.float(forKey: K.Activities.workout)
+            breakSlider.value = timerManager.defaults.float(forKey: K.Activities.breakTime)
+            //Labels text
+            workoutTimeLabel.text = timerManager.setWorkoutTime(time: timerManager.defaults.integer(forKey: K.Activities.workout))
+            breakTimeLabel.text = timerManager.setBreakTime(time: timerManager.defaults.integer(forKey: K.Activities.breakTime))
+            intervalsLabel.text = timerManager.updateIntervals(timerManager.defaults.double(forKey: K.intervals))
+        } else {
+            workoutSlider.value = 90
+            breakSlider.value = 90
+            workoutTimeLabel.text = timerManager.setWorkoutTime(time: Int(workoutSlider.value))
+            breakTimeLabel.text = timerManager.setBreakTime(time: Int(breakSlider.value))
+            intervalsLabel.text = timerManager.updateIntervals(Double(timerManager.totalOfIntervals))
+            timerManager.defaults.setValue(true, forKey: K.appFirstBoot)
         }
     }
 }
